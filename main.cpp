@@ -129,7 +129,8 @@ int main() {
 
 
     std::vector<int> ids;
-    std::vector<std::vector<cv::Point2f>> corners, rejected;
+    std::vector<std::vector<cv::Point2f>> corners;
+    std::vector<std::vector<cv::Point2f>> corner(1);
     std::vector<cv::Vec3d> rvec, tvec;
 
 //    cv::Ptr<cv::aruco::DetectorParameters> arucoParams;
@@ -173,6 +174,11 @@ int main() {
     faces.push_back(&face_4);
     faces.push_back(&face_5);
 
+    cv::VideoWriter outputVideo = cv::VideoWriter("demo1.avi",
+                                                  cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+                                                  30,
+                                                  cv::Size(1920, 1080));
+
     cv::Mat img_out, img_aruco;
     while (true) {
         camera >> img_0;
@@ -186,7 +192,8 @@ int main() {
         if (!ids.empty()) {
 //            cv::aruco::drawDetectedMarkers(img_out, corners, ids, cv::Scalar(0, 255, 0));
             for (int i = 0; i < ids.size(); i++) {
-                cv::aruco::estimatePoseSingleMarkers(corners, 0.7, new_mtx, dist, rvec, tvec);
+                corner[0] = corners[i];
+                cv::aruco::estimatePoseSingleMarkers(corner, 0.7, new_mtx, dist, rvec, tvec);
                 cv::projectPoints(objectPoints, rvec, tvec, new_mtx, dist, imagePoints);
 //                cv::drawFrameAxes(img_out, mtx, dist, rvec, tvec, 1);
 //                draw_vertex(img_out, imagePoints);
@@ -198,6 +205,8 @@ int main() {
         char c = (char) cv::waitKey(2);
         if (c == 113)
             break;
+
+        outputVideo.write(img_out);
     }
     return 0;
 }
