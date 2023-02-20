@@ -146,9 +146,9 @@ if __name__ == '__main__':
 
     arucoParams = aruco.DetectorParameters_create()
 
-    # camera = cv2.VideoCapture(0)
-    # address = 'http://192.168.0.65:8080/video'
-    # camera.open(address)
+    camera = cv2.VideoCapture(0)
+    address = 'http://192.168.0.65:8080/video'
+    camera.open(address)
 
     with open('calibration.yaml', 'r') as f:
         loadeddict = yaml.safe_load(f)
@@ -158,27 +158,27 @@ if __name__ == '__main__':
     mtx = np.array(mtx)
     dist = np.array(dist)
 
-    axis = np.float32([[0.35, -0.35, 0], [0.35, 0.35, 0], [-0.35, 0.35, 0], [-0.35, -0.35, 0],
-                       [0.35, -0.35, 0.7], [0.35, 0.35, 0.7], [-0.35, 0.35, 0.7], [-0.35, -0.35, 0.7]])
+    ml = 0.7
+    mlh = ml / 2
+
+    axis = np.float32([[mlh, -mlh, 0.0], [mlh, mlh, 0.0], [-mlh, mlh, 0.0], [-mlh, -mlh, 0.0],
+                       [mlh, -mlh, ml], [mlh, mlh, ml], [-mlh, mlh, ml], [-mlh, -mlh, ml]])
 
     face_1 = CubeFace(color=(0, 0, 255))
     face_2 = CubeFace(color=(255, 0, 0))
     face_3 = CubeFace(color=(0, 255, 0))
     face_4 = CubeFace(color=(0, 255, 255))
-
     face_5 = CubeFace(color=(182, 0, 235), is_top=True)
-
     faces = [face_1, face_2, face_3, face_4, face_5]
 
-    img = cv2.imread(r'D:\OpenCV\lab5\python\11.png')
-    # ret, img = camera.read()
+    ret, img = camera.read()
     h, w = img.shape[:2]
     newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
 
     while True:
-        # ret, img = camera.read()
+        ret, img = camera.read()
         h, w = img.shape[:2]
-        img = cv2.imread(r'D:\OpenCV\lab5\python\11.png')
+
         img_out = img.copy()
         img_out = cv2.undistort(img_out, mtx, dist, None, newcameramtx)
         img_aruco = cv2.cvtColor(img_out, cv2.COLOR_BGR2GRAY)
@@ -189,8 +189,6 @@ if __name__ == '__main__':
             # img_aruco = aruco.drawDetectedMarkers(img_aruco, corners, ids, (0, 255, 0))
             for corner in corners:
                 rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corner, 0.7, newcameramtx, dist)  # For a board
-                # print("Rotation:", rvec)
-                # print("Translation:", tvec)
 
                 imgpts, _ = cv2.projectPoints(axis, rvec, tvec, newcameramtx, dist)
                 imgpts = np.int32(imgpts).reshape(-1, 2)
@@ -202,6 +200,6 @@ if __name__ == '__main__':
         if cv2.waitKey(2) == ord('q'):
             break
 
-        cv2.imshow("Res", img_out)
+        cv2.imshow("Vid", img_out)
 
     cv2.destroyAllWindows()

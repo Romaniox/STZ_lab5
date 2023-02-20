@@ -1,7 +1,5 @@
 #include "Cube.h"
 
-#include <utility>
-
 CubeFace::CubeFace(cv::Point pt1, cv::Point pt2, cv::Point pt3, cv::Point pt4, cv::Scalar color, bool is_top) {
     this->ld = pt1;
     this->rd = pt2;
@@ -32,14 +30,7 @@ void CubeFace::rewrite(cv::Point pt1, cv::Point pt2, cv::Point pt3, cv::Point pt
     this->ru = pt3;
     this->lu = pt4;
 
-
-//    this->contour[0] = this->ld;
-//    this->contour[1] = this->rd;
-//    this->contour[2] = this->ru;
-//    this->contour[3] = this->lu;
-
     this->contour.clear();
-
     this->contour.push_back(this->ld);
     this->contour.push_back(this->rd);
     this->contour.push_back(this->ru);
