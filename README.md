@@ -4,7 +4,7 @@
 
 Сперва была сгенерирована доска ChAruco размерами 7 х 10 для калибровки камеры.
 <div align="center">
-  <img src="./data/aruco_board1.png" width="400"/>
+  <img src="./data/aruco_board.png" width="400"/>
  <br/><br/>   
 </div>
 
